@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to TypeScript</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+<style>
+  :root {
+    --amber:  #f5a623;
+    --green:  #4ecb8d;
+    --purple: #a78bfa;
+    --blue:   #60a5fa;
+    --red:    #f87171;
+    --bg:     #0a0a0f;
+    --bg2:    #10101a;
+    --bg3:    #181824;
+    --border: #2a2a3a;
+    --text:   #e8e8f0;
+    --muted:  #8888a8;
+  }
+
+  .reveal-viewport { background: var(--bg); }
+  .reveal .slides section { background: transparent; }
+
+  .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; font-weight: 700; }
+  .reveal h1 { font-size: 1.6em; color: var(--amber); line-height: 1.1; }
+  .reveal h2 { font-size: 1.1em; color: var(--amber); margin-bottom: .2em; }
+  .reveal h3 { font-size: .78em; color: var(--green); margin-bottom: .15em; }
+  .reveal p  { font-size: .56em; line-height: 1.45; color: var(--text); }
+  .reveal li { font-size: .54em; line-height: 1.45; margin-bottom: .1em; }
+  .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
+  .reveal pre  { box-shadow: none; background: var(--bg3); border: 1px solid var(--border);
+                 border-radius: 6px; padding: .3em .5em; margin: .25em 0; }
+  .reveal pre code { font-size: .52em; line-height: 1.35; background: transparent; color: #cdd6f4; }
+
+  /* ── slide chrome ── */
+  .slide-hdr {
+    display: flex; align-items: center; gap: .4em;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: .2em; margin-bottom: .3em;
+  }
+  .slide-hdr .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .42em; font-weight: 500;
+    color: var(--bg); background: var(--amber);
+    padding: .1em .4em; border-radius: 3px;
+    letter-spacing: .04em;
+  }
+  .slide-hdr h2 { margin: 0; font-size: .95em; }
+
+  /* ── two-column ── */
+  .cols   { display: grid; gap: .5em; }
+  .cols-2 { grid-template-columns: 1fr 1fr; }
+  .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .cols-6040 { grid-template-columns: 6fr 4fr; }
+  .cols-4060 { grid-template-columns: 4fr 6fr; }
+
+  /* ── cards ── */
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 6px; padding: .35em .6em;
+  }
+  .card.amber { border-left: 3px solid var(--amber); }
+  .card.green { border-left: 3px solid var(--green); }
+  .card.purple{ border-left: 3px solid var(--purple); }
+  .card.blue  { border-left: 3px solid var(--blue); }
+  .card.red   { border-left: 3px solid var(--red); }
+  .card h3 { font-size: .64em; margin: 0 0 .12em; }
+  .card p  { font-size: .52em; margin: 0; color: #b8b8d0; }
+  .card ul { margin: 0; padding-left: 1em; }
+  .card li { font-size: .52em; color: #b8b8d0; margin-bottom: .02em; }
+
+  /* ── table ── */
+  .reveal table { width: 100%; border-collapse: collapse; font-size: .5em; }
+  .reveal table th { background: var(--bg3); color: var(--amber); font-weight: 600;
+                     padding: .2em .4em; border: 1px solid var(--border); text-align: left; }
+  .reveal table td { padding: .18em .4em; border: 1px solid var(--border); color: #ccc; }
+  .reveal table tr:nth-child(even) td { background: #0e0e18; }
+
+  /* ── accent spans ── */
+  .a  { color: var(--amber); font-weight: 600; }
+  .g  { color: var(--green); font-weight: 600; }
+  .p  { color: var(--purple); font-weight: 600; }
+  .b  { color: var(--blue); font-weight: 600; }
+  .r  { color: var(--red); font-weight: 600; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ── SVG graph diagrams ── */
+  svg.diagram { display: block; margin: 0 auto; overflow: visible; }
+
+  /* ── pill badges ── */
+  .pill {
+    display: inline-block; font-family: 'JetBrains Mono', monospace;
+    font-size: .44em; padding: .08em .4em; border-radius: 99px;
+    border: 1px solid; margin: 0 .08em;
+  }
+  .pill.amber { color: var(--amber); border-color: var(--amber); }
+  .pill.green { color: var(--green); border-color: var(--green); }
+  .pill.purple{ color: var(--purple); border-color: var(--purple); }
+  .pill.blue  { color: var(--blue); border-color: var(--blue); }
+
+  /* ── footer — hidden ── */
+  .reveal .slide-footer { display: none; }
+  /* title slide special */
+  .title-slide h1 { font-size: 1.8em; }
+  .title-slide .subtitle {
+    font-size: .7em; color: var(--green); font-family: 'DM Sans', sans-serif;
+    font-weight: 300; letter-spacing: .04em; margin: .3em 0 .6em;
+  }
+  .title-slide .meta { font-size: .48em; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  /* reduce default margins */
+  .reveal ul, .reveal ol { margin: .15em 0 .15em 1em; }
+  .reveal .slides > section { display: flex !important; flex-direction: column !important; overflow-y: auto !important; align-items: stretch !important; justify-content: flex-start !important; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+
+<!-- ═══════════════════════════════ SLIDE 01 — TITLE ═══════════════════════════════ -->
+<section class="title-slide" data-background-color="#0a0a0f">
+  <div style="text-align:left; max-width:820px; margin:0 auto; padding: 1em 0;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.5em; color:var(--muted); margin-bottom:.4em; letter-spacing:.1em;">
+      TECHNICAL PRESENTATION
+    </div>
+    <h1>Introduction to<br>TypeScript</h1>
+    <div class="subtitle">Typed JavaScript at Any Scale</div>
+    <div style="width:60px; height:3px; background:var(--amber); margin-bottom:1.4em;"></div>
+    <div class="meta">types &middot; generics &middot; interfaces &middot; advanced types &middot; Node &middot; React</div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 02 — AGENDA ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">02</span><h2>Agenda</h2></div>
+  <div class="cols cols-2">
+    <div class="card amber">
+      <h3>Foundations</h3>
+      <ul>
+        <li>What is TypeScript &amp; why it exists</li>
+        <li>Type annotations &amp; inference</li>
+        <li>Interfaces &amp; type aliases</li>
+        <li>Functions &amp; generics</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>Type System Deep Dive</h3>
+      <ul>
+        <li>Enums &amp; literal types</li>
+        <li>Classes &amp; access modifiers</li>
+        <li>Type guards &amp; narrowing</li>
+        <li>Advanced types &amp; mapped types</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h3>Ecosystem Integration</h3>
+      <ul>
+        <li>Module system &amp; declaration files</li>
+        <li>TypeScript with Node.js</li>
+        <li>TypeScript with Express</li>
+        <li>TypeScript with React</li>
+      </ul>
+    </div>
+    <div class="card blue">
+      <h3>Production</h3>
+      <ul>
+        <li>Strict mode &amp; compiler options</li>
+        <li>Error handling patterns</li>
+        <li>Migration strategy</li>
+        <li>Summary &amp; next steps</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 03 — WHAT IS TYPESCRIPT ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">03</span><h2>What Is TypeScript?</h2></div>
+  <div class="cols cols-6040">
+    <div>
+      <p>TypeScript is a <span class="a">strict syntactical superset of JavaScript</span> developed by <span class="g">Anders Hejlsberg</span> at Microsoft (released 2012). Every valid JS file is valid TS. TypeScript compiles (<code>tsc</code>) to plain JavaScript &mdash; types are erased at runtime.</p>
+      <p>The key insight: JavaScript's dynamic typing becomes a liability at scale. TypeScript adds a <span class="p">static type system</span> that catches errors at compile time, enables powerful IDE tooling, and serves as living documentation.</p>
+      <div class="card amber" style="margin-top:.3em;">
+        <h3>TypeScript is NOT</h3>
+        <ul>
+          <li>A new language (it's a JS superset &mdash; all JS is valid TS)</li>
+          <li>A runtime (types are erased during compilation)</li>
+          <li>Only for large projects (benefits start from line 1)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>Key Properties</h3>
+        <ul>
+          <li><span class="a">Static typing</span> &mdash; errors at compile time</li>
+          <li><span class="g">Type inference</span> &mdash; less boilerplate than Java/C#</li>
+          <li><span class="p">Structural typing</span> &mdash; shape matters, not name</li>
+          <li><span class="b">IDE integration</span> &mdash; autocomplete, refactoring</li>
+          <li><span class="r">Gradual adoption</span> &mdash; use as much or little as you want</li>
+        </ul>
+      </div>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>Compilation Pipeline</h3>
+<pre><code class="language-bash"># Install
+npm install -D typescript
+
+# Compile
+npx tsc index.ts          # &rarr; index.js
+npx tsc --watch           # recompile on change
+npx tsc --init            # generate tsconfig.json</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 04 — TYPE ANNOTATIONS ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">04</span><h2>Type Annotations &amp; Inference</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3 style="color:var(--amber);">Explicit Annotations</h3>
+<pre><code class="language-typescript">// Primitives
+let name: string = "Alice";
+let age: number = 30;
+let active: boolean = true;
+let data: null = null;
+let val: undefined = undefined;
+
+// Arrays &amp; tuples
+let ids: number[] = [1, 2, 3];
+let pair: [string, number] = ["age", 30];
+
+// Object type
+let user: { name: string; age: number } = {
+  name: "Alice",
+  age: 30,
+};</code></pre>
+    </div>
+    <div>
+      <h3 style="color:var(--green);">Type Inference</h3>
+<pre><code class="language-typescript">// TS infers types automatically
+let city = "London";        // string
+let count = 42;             // number
+let items = [1, 2, 3];     // number[]
+
+// Inference from return values
+function double(n: number) {
+  return n * 2;             // returns number
+}
+
+// Contextual typing
+const names = ["Alice", "Bob"];
+names.forEach(name =&gt; {
+  console.log(name.toUpperCase()); // name: string
+});</code></pre>
+    </div>
+  </div>
+  <div class="cols cols-3" style="margin-top:.3em;">
+    <div class="card amber">
+      <h3>any</h3>
+      <p>Opts out of type checking entirely. Avoid in production code &mdash; defeats the purpose of TypeScript.</p>
+<pre><code class="language-typescript">let x: any = "hello";
+x = 42;  // no error
+x.foo(); // no error (crashes at runtime)</code></pre>
+    </div>
+    <div class="card purple">
+      <h3>unknown</h3>
+      <p>Type-safe counterpart of <code>any</code>. Must narrow before use.</p>
+<pre><code class="language-typescript">let x: unknown = getInput();
+// x.toUpperCase(); // Error!
+if (typeof x === "string") {
+  x.toUpperCase();  // OK after narrowing
+}</code></pre>
+    </div>
+    <div class="card red">
+      <h3>never</h3>
+      <p>Represents values that never occur. Used for exhaustive checks and functions that never return.</p>
+<pre><code class="language-typescript">function fail(msg: string): never {
+  throw new Error(msg);
+}
+// Exhaustive check
+type Shape = "circle" | "square";
+function area(s: Shape) {
+  switch (s) {
+    case "circle": return /*...*/;
+    case "square": return /*...*/;
+    default: const _: never = s;
+  }
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 05 — INTERFACES & TYPE ALIASES ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">05</span><h2>Interfaces &amp; Type Aliases</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3 style="color:var(--amber);">Interfaces</h3>
+<pre><code class="language-typescript">interface User {
+  id: number;
+  name: string;
+  email?: string;            // optional
+  readonly createdAt: Date;  // immutable
+}
+
+// Extending
+interface Admin extends User {
+  permissions: string[];
+}
+
+// Declaration merging (interfaces only)
+interface User {
+  avatar?: string;  // merges with above
+}</code></pre>
+    </div>
+    <div>
+      <h3 style="color:var(--green);">Type Aliases</h3>
+<pre><code class="language-typescript">type ID = string | number;   // union type
+
+type Point = {
+  x: number;
+  y: number;
+};
+
+// Intersection types
+type Timestamped = Point &amp; {
+  createdAt: Date;
+};
+
+// Mapped from existing types
+type ReadonlyUser = Readonly&lt;User&gt;;
+type PartialUser = Partial&lt;User&gt;;</code></pre>
+    </div>
+  </div>
+  <div class="cols cols-2" style="margin-top:.3em;">
+    <div class="card purple">
+      <h3>Structural Typing</h3>
+      <p>TypeScript uses <span class="a">structural typing</span> (duck typing). If the shape matches, it's assignable &mdash; regardless of declared type name.</p>
+<pre><code class="language-typescript">interface Point { x: number; y: number }
+interface Coord { x: number; y: number }
+
+let p: Point = { x: 1, y: 2 };
+let c: Coord = p;  // OK — same shape</code></pre>
+    </div>
+    <div class="card blue">
+      <h3>Union &amp; Discriminated Unions</h3>
+<pre><code class="language-typescript">type Result =
+  | { status: "ok";    data: string }
+  | { status: "error"; message: string };
+
+function handle(r: Result) {
+  if (r.status === "ok") {
+    console.log(r.data);      // narrowed
+  } else {
+    console.log(r.message);   // narrowed
+  }
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 06 — FUNCTIONS ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">06</span><h2>Functions</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3 style="color:var(--amber);">Parameter &amp; Return Types</h3>
+<pre><code class="language-typescript">// Typed parameters and return
+function greet(name: string): string {
+  return `Hello, ${name}!`;
+}
+
+// Optional &amp; default parameters
+function log(msg: string, level = "info"): void {
+  console.log(`[${level}] ${msg}`);
+}
+
+// Rest parameters
+function sum(...nums: number[]): number {
+  return nums.reduce((a, b) =&gt; a + b, 0);
+}
+
+// Function type alias
+type Comparator&lt;T&gt; = (a: T, b: T) =&gt; number;</code></pre>
+    </div>
+    <div>
+      <h3 style="color:var(--green);">Overloads</h3>
+<pre><code class="language-typescript">// Overload signatures
+function parse(input: string): number;
+function parse(input: string[]): number[];
+// Implementation signature
+function parse(input: string | string[]): number | number[] {
+  if (Array.isArray(input)) {
+    return input.map(Number);
+  }
+  return Number(input);
+}
+
+parse("42");        // returns number
+parse(["1", "2"]);  // returns number[]</code></pre>
+      <div class="card green" style="margin-top:.2em;">
+        <h3>Generic Functions</h3>
+<pre><code class="language-typescript">function first&lt;T&gt;(arr: T[]): T | undefined {
+  return arr[0];
+}
+
+first([1, 2, 3]);      // number | undefined
+first(["a", "b"]);     // string | undefined</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="card amber" style="margin-top:.3em;">
+    <h3>Callback Typing Pattern</h3>
+<pre><code class="language-typescript">function fetchData&lt;T&gt;(url: string, transform: (raw: unknown) =&gt; T): Promise&lt;T&gt; {
+  return fetch(url).then(res =&gt; res.json()).then(transform);
+}
+// Usage — TS infers return as Promise&lt;User[]&gt;
+const users = await fetchData("/api/users", (data) =&gt; data as User[]);</code></pre>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 07 — GENERICS ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">07</span><h2>Generics</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3 style="color:var(--amber);">Type Parameters &amp; Constraints</h3>
+<pre><code class="language-typescript">// Basic generic
+interface Box&lt;T&gt; {
+  value: T;
+}
+const strBox: Box&lt;string&gt; = { value: "hello" };
+
+// Constraints with extends
+function getLength&lt;T extends { length: number }&gt;(
+  item: T
+): number {
+  return item.length;
+}
+getLength("hello");   // 5
+getLength([1, 2, 3]); // 3
+// getLength(42);     // Error: no .length
+
+// keyof constraint
+function getProperty&lt;T, K extends keyof T&gt;(
+  obj: T, key: K
+): T[K] {
+  return obj[key];
+}</code></pre>
+    </div>
+    <div>
+      <h3 style="color:var(--green);">Utility Types</h3>
+      <table>
+        <thead><tr><th>Utility</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>Partial&lt;T&gt;</code></td><td>All props optional</td><td><code>Partial&lt;User&gt;</code></td></tr>
+          <tr><td><code>Required&lt;T&gt;</code></td><td>All props required</td><td><code>Required&lt;Config&gt;</code></td></tr>
+          <tr><td><code>Pick&lt;T,K&gt;</code></td><td>Select subset of keys</td><td><code>Pick&lt;User, "id" | "name"&gt;</code></td></tr>
+          <tr><td><code>Omit&lt;T,K&gt;</code></td><td>Remove keys</td><td><code>Omit&lt;User, "password"&gt;</code></td></tr>
+          <tr><td><code>Record&lt;K,V&gt;</code></td><td>Map keys to values</td><td><code>Record&lt;string, number&gt;</code></td></tr>
+          <tr><td><code>Readonly&lt;T&gt;</code></td><td>All props readonly</td><td><code>Readonly&lt;State&gt;</code></td></tr>
+          <tr><td><code>ReturnType&lt;F&gt;</code></td><td>Infer return type</td><td><code>ReturnType&lt;typeof fn&gt;</code></td></tr>
+          <tr><td><code>Parameters&lt;F&gt;</code></td><td>Infer param types</td><td><code>Parameters&lt;typeof fn&gt;</code></td></tr>
+        </tbody>
+      </table>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>Real-World Generic</h3>
+<pre><code class="language-typescript">// API response wrapper
+interface ApiResponse&lt;T&gt; {
+  data: T;
+  status: number;
+  timestamp: Date;
+}
+
+async function fetchApi&lt;T&gt;(
+  url: string
+): Promise&lt;ApiResponse&lt;T&gt;&gt; {
+  const res = await fetch(url);
+  const data = await res.json();
+  return { data, status: res.status, timestamp: new Date() };
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 08 — ENUMS & LITERAL TYPES ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">08</span><h2>Enums &amp; Literal Types</h2></div>
+  <div class="cols cols-3">
+    <div>
+      <div class="card amber">
+        <h3>Numeric Enums</h3>
+<pre><code class="language-typescript">enum Direction {
+  Up,      // 0
+  Down,    // 1
+  Left,    // 2
+  Right,   // 3
+}
+
+let d: Direction = Direction.Up;
+console.log(Direction[0]); // "Up"
+// Reverse mapping works</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>String Enums</h3>
+<pre><code class="language-typescript">enum Status {
+  Active  = "ACTIVE",
+  Paused  = "PAUSED",
+  Deleted = "DELETED",
+}
+
+// No reverse mapping
+// More readable in logs/JSON
+// Use for API contracts</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card purple">
+        <h3>const Enums</h3>
+<pre><code class="language-typescript">const enum HttpMethod {
+  GET  = "GET",
+  POST = "POST",
+  PUT  = "PUT",
+}
+
+// Inlined at compile time
+// No runtime object generated
+let m = HttpMethod.GET;
+// Compiles to: let m = "GET";</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="cols cols-2" style="margin-top:.3em;">
+    <div class="card blue">
+      <h3>Literal Types &mdash; Often Preferred Over Enums</h3>
+<pre><code class="language-typescript">// String literal union — no runtime cost
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+type Status = "idle" | "loading" | "success" | "error";
+
+function request(method: HttpMethod, url: string) { /* ... */ }
+request("GET", "/api/users");    // OK
+// request("PATCH", "/api");     // Error!</code></pre>
+    </div>
+    <div class="card red">
+      <h3>Discriminated Unions</h3>
+<pre><code class="language-typescript">type Shape =
+  | { kind: "circle";    radius: number }
+  | { kind: "rectangle"; width: number; height: number }
+  | { kind: "triangle";  base: number; height: number };
+
+function area(shape: Shape): number {
+  switch (shape.kind) {
+    case "circle":    return Math.PI * shape.radius ** 2;
+    case "rectangle": return shape.width * shape.height;
+    case "triangle":  return 0.5 * shape.base * shape.height;
+  }
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 09 — CLASSES ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">09</span><h2>Classes &amp; Access Modifiers</h2></div>
+  <div class="cols cols-2">
+    <div>
+<pre><code class="language-typescript">class Animal {
+  // Access modifiers
+  public name: string;
+  protected speed: number;
+  private _id: number;
+
+  constructor(name: string, speed: number) {
+    this.name = name;
+    this.speed = speed;
+    this._id = Math.random();
+  }
+
+  // Shorthand — declare in constructor
+  // constructor(public name: string) {}
+
+  move(): string {
+    return `${this.name} moves at ${this.speed}km/h`;
+  }
+}
+
+class Dog extends Animal {
+  constructor(name: string) {
+    super(name, 40);
+  }
+
+  bark(): string {
+    return `${this.name} says woof!`;
+    // this.speed OK (protected)
+    // this._id  Error (private)
+  }
+}</code></pre>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3>Abstract Classes</h3>
+<pre><code class="language-typescript">abstract class Shape {
+  abstract area(): number;
+  abstract perimeter(): number;
+
+  describe(): string {
+    return `Area: ${this.area().toFixed(2)}`;
+  }
+}
+
+class Circle extends Shape {
+  constructor(private radius: number) { super(); }
+  area() { return Math.PI * this.radius ** 2; }
+  perimeter() { return 2 * Math.PI * this.radius; }
+}</code></pre>
+      </div>
+      <div class="card green" style="margin-top:.3em;">
+        <h3>Implements Interface</h3>
+<pre><code class="language-typescript">interface Serializable {
+  serialize(): string;
+  deserialize(data: string): void;
+}
+
+class Config implements Serializable {
+  constructor(private data: Record&lt;string, unknown&gt;) {}
+
+  serialize(): string {
+    return JSON.stringify(this.data);
+  }
+
+  deserialize(raw: string): void {
+    this.data = JSON.parse(raw);
+  }
+}</code></pre>
+      </div>
+      <table style="margin-top:.3em;">
+        <thead><tr><th>Modifier</th><th>Class</th><th>Subclass</th><th>Outside</th></tr></thead>
+        <tbody>
+          <tr><td><span class="g">public</span></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td><span class="a">protected</span></td><td>Yes</td><td>Yes</td><td>No</td></tr>
+          <tr><td><span class="r">private</span></td><td>Yes</td><td>No</td><td>No</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 10 — TYPE GUARDS ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">10</span><h2>Type Guards &amp; Narrowing</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3 style="color:var(--amber);">Built-in Guards</h3>
+<pre><code class="language-typescript">function process(value: string | number | Date) {
+  // typeof guard
+  if (typeof value === "string") {
+    return value.toUpperCase();   // string
+  }
+  // instanceof guard
+  if (value instanceof Date) {
+    return value.toISOString();   // Date
+  }
+  return value.toFixed(2);       // number
+}
+
+// "in" operator guard
+interface Fish { swim(): void }
+interface Bird { fly(): void }
+
+function move(animal: Fish | Bird) {
+  if ("swim" in animal) {
+    animal.swim();                // Fish
+  } else {
+    animal.fly();                 // Bird
+  }
+}</code></pre>
+    </div>
+    <div>
+      <h3 style="color:var(--green);">Custom Type Predicates</h3>
+<pre><code class="language-typescript">// Type predicate function
+function isString(val: unknown): val is string {
+  return typeof val === "string";
+}
+
+// Usage — narrows the type
+function process(input: unknown) {
+  if (isString(input)) {
+    console.log(input.toUpperCase()); // string
+  }
+}
+
+// Filter with type predicate
+const mixed: (string | number)[] = [1, "a", 2, "b"];
+const strings = mixed.filter(
+  (x): x is string =&gt; typeof x === "string"
+);
+// strings: string[]</code></pre>
+      <div class="card purple" style="margin-top:.2em;">
+        <h3>Assertion Functions</h3>
+<pre><code class="language-typescript">function assertDefined&lt;T&gt;(
+  val: T | null | undefined,
+  msg?: string
+): asserts val is T {
+  if (val == null) throw new Error(msg ?? "Undefined");
+}
+
+const user = getUser(); // User | null
+assertDefined(user, "User not found");
+user.name; // OK — narrowed to User</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 11 — ADVANCED TYPES ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">11</span><h2>Advanced Types</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber">
+        <h3>Mapped Types</h3>
+<pre><code class="language-typescript">// Make all properties optional (how Partial works)
+type MyPartial&lt;T&gt; = {
+  [K in keyof T]?: T[K];
+};
+
+// Make all properties nullable
+type Nullable&lt;T&gt; = {
+  [K in keyof T]: T[K] | null;
+};
+
+// Remap keys with "as"
+type Getters&lt;T&gt; = {
+  [K in keyof T as `get${Capitalize&lt;string &amp; K&gt;}`]: () =&gt; T[K];
+};
+// { getName: () =&gt; string; getAge: () =&gt; number }</code></pre>
+      </div>
+      <div class="card blue" style="margin-top:.3em;">
+        <h3>Template Literal Types</h3>
+<pre><code class="language-typescript">type EventName = `${"click" | "focus"}_${"start" | "end"}`;
+// "click_start" | "click_end" | "focus_start" | "focus_end"
+
+type CSSValue = `${number}${"px" | "em" | "rem" | "%"}`;
+const width: CSSValue = "100px";    // OK
+// const bad: CSSValue = "100vw";   // Error</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>Conditional Types</h3>
+<pre><code class="language-typescript">// T extends U ? X : Y
+type IsString&lt;T&gt; = T extends string ? true : false;
+
+type A = IsString&lt;string&gt;;  // true
+type B = IsString&lt;number&gt;;  // false
+
+// Extract / Exclude (built-in)
+type T1 = Extract&lt;"a" | "b" | "c", "a" | "c"&gt;; // "a" | "c"
+type T2 = Exclude&lt;"a" | "b" | "c", "a"&gt;;        // "b" | "c"</code></pre>
+      </div>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>infer Keyword</h3>
+<pre><code class="language-typescript">// Extract return type of a function
+type MyReturnType&lt;T&gt; = T extends (...args: any[]) =&gt; infer R
+  ? R
+  : never;
+
+type R1 = MyReturnType&lt;() =&gt; string&gt;;  // string
+
+// Unpack Promise
+type Awaited&lt;T&gt; = T extends Promise&lt;infer U&gt;
+  ? Awaited&lt;U&gt;   // recursive for nested Promises
+  : T;
+
+type R2 = Awaited&lt;Promise&lt;Promise&lt;number&gt;&gt;&gt;;  // number</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 12 — MODULE SYSTEM ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">12</span><h2>Module System</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3 style="color:var(--amber);">Import / Export</h3>
+<pre><code class="language-typescript">// Named exports
+export interface User { id: number; name: string; }
+export function createUser(name: string): User {
+  return { id: Date.now(), name };
+}
+
+// Default export
+export default class UserService { /* ... */ }
+
+// Re-export
+export { User as AppUser } from "./models";
+export * from "./utils";
+
+// Type-only imports (erased at compile time)
+import type { User } from "./models";
+import { type User, createUser } from "./models";</code></pre>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>Declaration Files (.d.ts)</h3>
+        <p>Type definitions for JavaScript libraries. Contain only type information, no implementation.</p>
+<pre><code class="language-typescript">// globals.d.ts
+declare const API_URL: string;
+declare function analytics(event: string): void;
+
+// module.d.ts
+declare module "my-lib" {
+  export function parse(input: string): object;
+  export const version: string;
+}</code></pre>
+      </div>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>@types &amp; DefinitelyTyped</h3>
+        <ul>
+          <li><code>npm i -D @types/express</code> &mdash; community types</li>
+          <li>60,000+ packages on DefinitelyTyped</li>
+          <li>Auto-discovered by TS if in <code>node_modules/@types</code></li>
+          <li>Use <code>typeRoots</code> in tsconfig to customise</li>
+        </ul>
+      </div>
+      <div class="card blue" style="margin-top:.3em;">
+        <h3>Ambient Modules</h3>
+<pre><code class="language-typescript">// Handle non-TS imports (CSS, SVG, JSON)
+declare module "*.css" {
+  const classes: Record&lt;string, string&gt;;
+  export default classes;
+}
+declare module "*.svg" {
+  const src: string;
+  export default src;
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 13 — TS WITH NODE ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">13</span><h2>TypeScript with Node.js</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber">
+        <h3>tsconfig.json for Node</h3>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "sourceMap": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@utils/*": ["./src/utils/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>Development Runners</h3>
+        <table>
+          <thead><tr><th>Tool</th><th>Command</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><span class="a">ts-node</span></td><td><code>npx ts-node src/index.ts</code></td><td>JIT compilation, slower startup</td></tr>
+            <tr><td><span class="g">tsx</span></td><td><code>npx tsx src/index.ts</code></td><td>esbuild-powered, fast</td></tr>
+            <tr><td><span class="p">tsc --watch</span></td><td><code>npx tsc -w</code></td><td>Compile + nodemon for restart</td></tr>
+            <tr><td><span class="b">Node 22+</span></td><td><code>node --experimental-strip-types index.ts</code></td><td>Native TS stripping (experimental)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>Path Aliases with ts-node</h3>
+<pre><code class="language-json">// package.json
+{
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  }
+}
+
+// tsconfig-paths registers @ aliases at runtime
+// tsx handles them automatically</code></pre>
+      </div>
+      <div class="card blue" style="margin-top:.3em;">
+        <h3>Essential Dev Dependencies</h3>
+<pre><code class="language-bash">npm i -D typescript @types/node tsx
+npm i -D @tsconfig/node22  # shared base config</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 14 — TS WITH EXPRESS ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">14</span><h2>TypeScript with Express</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3 style="color:var(--amber);">Typed Request / Response</h3>
+<pre><code class="language-typescript">import express, {
+  Request, Response, NextFunction
+} from "express";
+
+interface CreateUserBody {
+  name: string;
+  email: string;
+}
+
+interface UserParams {
+  id: string;
+}
+
+// Typed route handler
+app.post(
+  "/api/users",
+  (req: Request&lt;{}, {}, CreateUserBody&gt;, res: Response) =&gt; {
+    const { name, email } = req.body; // typed!
+    // ...
+    res.status(201).json({ id: 1, name, email });
+  }
+);
+
+app.get(
+  "/api/users/:id",
+  (req: Request&lt;UserParams&gt;, res: Response) =&gt; {
+    const userId = req.params.id; // string
+    // ...
+  }
+);</code></pre>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>Typed Middleware</h3>
+<pre><code class="language-typescript">// Extend Express Request
+declare global {
+  namespace Express {
+    interface Request {
+      user?: { id: number; role: string };
+    }
+  }
+}
+
+// Auth middleware
+function auth(
+  req: Request, res: Response, next: NextFunction
+): void {
+  const token = req.headers.authorization;
+  if (!token) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  req.user = verifyToken(token); // typed!
+  next();
+}
+
+// Error middleware (4 params)
+function errorHandler(
+  err: Error, req: Request,
+  res: Response, _next: NextFunction
+): void {
+  res.status(500).json({ error: err.message });
+}</code></pre>
+      </div>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>Setup</h3>
+<pre><code class="language-bash">npm i express
+npm i -D @types/express typescript tsx</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 15 — TS WITH REACT ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">15</span><h2>TypeScript with React</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3 style="color:var(--amber);">Components &amp; Props</h3>
+<pre><code class="language-typescript">// Props interface
+interface ButtonProps {
+  label: string;
+  variant?: "primary" | "secondary";
+  disabled?: boolean;
+  onClick: (e: React.MouseEvent) =&gt; void;
+  children?: React.ReactNode;
+}
+
+// Function component (preferred over React.FC)
+function Button({ label, variant = "primary",
+  disabled, onClick, children }: ButtonProps) {
+  return (
+    &lt;button
+      className={variant}
+      disabled={disabled}
+      onClick={onClick}
+    &gt;
+      {children ?? label}
+    &lt;/button&gt;
+  );
+}</code></pre>
+      <div class="card amber" style="margin-top:.2em;">
+        <h3>Generic Component</h3>
+<pre><code class="language-typescript">interface ListProps&lt;T&gt; {
+  items: T[];
+  renderItem: (item: T) =&gt; React.ReactNode;
+}
+
+function List&lt;T&gt;({ items, renderItem }: ListProps&lt;T&gt;) {
+  return &lt;ul&gt;{items.map(renderItem)}&lt;/ul&gt;;
+}
+
+// Usage — T inferred as User
+&lt;List items={users} renderItem={u =&gt; &lt;li&gt;{u.name}&lt;/li&gt;} /&gt;</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>Hooks Typing</h3>
+<pre><code class="language-typescript">// useState with type parameter
+const [user, setUser] = useState&lt;User | null&gt;(null);
+
+// useRef
+const inputRef = useRef&lt;HTMLInputElement&gt;(null);
+
+// useReducer
+type Action =
+  | { type: "increment" }
+  | { type: "set"; payload: number };
+
+function reducer(state: number, action: Action): number {
+  switch (action.type) {
+    case "increment": return state + 1;
+    case "set":       return action.payload;
+  }
+}
+const [count, dispatch] = useReducer(reducer, 0);</code></pre>
+      </div>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>Common Event Types</h3>
+        <table>
+          <thead><tr><th>Event</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr><td>Click</td><td><code>React.MouseEvent&lt;HTMLButtonElement&gt;</code></td></tr>
+            <tr><td>Change</td><td><code>React.ChangeEvent&lt;HTMLInputElement&gt;</code></td></tr>
+            <tr><td>Submit</td><td><code>React.FormEvent&lt;HTMLFormElement&gt;</code></td></tr>
+            <tr><td>Keyboard</td><td><code>React.KeyboardEvent&lt;HTMLInputElement&gt;</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 16 — STRICT MODE ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">16</span><h2>Strict Mode &amp; Compiler Options</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber">
+        <h3>What <code>"strict": true</code> Enables</h3>
+        <table>
+          <thead><tr><th>Flag</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td><code>strictNullChecks</code></td><td><code>null</code>/<code>undefined</code> not assignable to other types</td></tr>
+            <tr><td><code>noImplicitAny</code></td><td>Error on inferred <code>any</code></td></tr>
+            <tr><td><code>strictFunctionTypes</code></td><td>Contravariant parameter checking</td></tr>
+            <tr><td><code>strictPropertyInitialization</code></td><td>Class props must be initialised</td></tr>
+            <tr><td><code>noImplicitThis</code></td><td>Error on <code>this</code> with implicit <code>any</code></td></tr>
+            <tr><td><code>alwaysStrict</code></td><td>Emit <code>"use strict"</code></td></tr>
+            <tr><td><code>useUnknownInCatchVariables</code></td><td><code>catch(e)</code> is <code>unknown</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>Key Compiler Options</h3>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    // Type checking
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // Output
+    "target": "ES2022",
+    "module": "Node16",
+    "outDir": "./dist",
+    "declaration": true,
+    "sourceMap": true,
+
+    // Module resolution
+    "moduleResolution": "Node16",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+
+    // Emit
+    "removeComments": true,
+    "skipLibCheck": true
+  }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="card purple" style="margin-top:.3em;">
+    <h3>Recommendation</h3>
+    <p>Start every new project with <code>"strict": true</code>. Add <code>"noUncheckedIndexedAccess": true</code> for array/object safety. Use <code>"exactOptionalPropertyTypes": true</code> to distinguish <code>undefined</code> from missing. These flags catch entire categories of bugs at zero runtime cost.</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 17 — ERROR HANDLING ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">17</span><h2>Error Handling Patterns</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber">
+        <h3>Result Type Pattern</h3>
+<pre><code class="language-typescript">// Discriminated union for success / failure
+type Result&lt;T, E = Error&gt; =
+  | { ok: true;  value: T }
+  | { ok: false; error: E };
+
+function parseJSON(input: string): Result&lt;unknown&gt; {
+  try {
+    return { ok: true, value: JSON.parse(input) };
+  } catch (e) {
+    return { ok: false, error: e as Error };
+  }
+}
+
+const result = parseJSON('{"name":"Alice"}');
+if (result.ok) {
+  console.log(result.value); // narrowed to unknown
+} else {
+  console.error(result.error.message);
+}</code></pre>
+      </div>
+      <div class="card green" style="margin-top:.3em;">
+        <h3>Branded Types</h3>
+<pre><code class="language-typescript">// Prevent mixing IDs from different domains
+type UserId = string &amp; { readonly __brand: "UserId" };
+type OrderId = string &amp; { readonly __brand: "OrderId" };
+
+function createUserId(id: string): UserId {
+  // validate...
+  return id as UserId;
+}
+
+function getUser(id: UserId) { /* ... */ }
+// getUser(orderId);  // Error — type mismatch!</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card purple">
+        <h3>Exhaustive Checks with never</h3>
+<pre><code class="language-typescript">type Status = "active" | "paused" | "deleted";
+
+function assertNever(x: never): never {
+  throw new Error(`Unexpected value: ${x}`);
+}
+
+function handleStatus(status: Status): string {
+  switch (status) {
+    case "active":  return "Running";
+    case "paused":  return "On hold";
+    case "deleted": return "Removed";
+    default: return assertNever(status);
+    // If a new status is added, TS errors here
+  }
+}</code></pre>
+      </div>
+      <div class="card blue" style="margin-top:.3em;">
+        <h3>Typed Error Hierarchy</h3>
+<pre><code class="language-typescript">class AppError extends Error {
+  constructor(
+    message: string,
+    public readonly code: string,
+    public readonly statusCode: number
+  ) {
+    super(message);
+    this.name = "AppError";
+  }
+}
+
+class NotFoundError extends AppError {
+  constructor(resource: string) {
+    super(`${resource} not found`, "NOT_FOUND", 404);
+  }
+}
+
+class ValidationError extends AppError {
+  constructor(public readonly fields: string[]) {
+    super("Validation failed", "VALIDATION", 400);
+  }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 18 — MIGRATION ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">18</span><h2>Migration Strategy</h2></div>
+  <p>Migrating a JavaScript project to TypeScript doesn't have to be all-or-nothing. Use a <span class="a">gradual, incremental approach</span>.</p>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber">
+        <h3>Step-by-Step Migration</h3>
+        <ul>
+          <li><span class="a">1.</span> Add <code>tsconfig.json</code> with <code>"allowJs": true</code></li>
+          <li><span class="a">2.</span> Rename files <code>.js</code> &rarr; <code>.ts</code> one at a time</li>
+          <li><span class="a">3.</span> Start with <code>"strict": false</code>, enable flags incrementally</li>
+          <li><span class="a">4.</span> Replace <code>any</code> with <code>unknown</code>, then add proper types</li>
+          <li><span class="a">5.</span> Add types to function signatures first (biggest ROI)</li>
+          <li><span class="a">6.</span> Enable <code>"strict": true</code> once most files are typed</li>
+        </ul>
+      </div>
+      <div class="card green" style="margin-top:.3em;">
+        <h3>JSDoc Types (no rename needed)</h3>
+<pre><code class="language-javascript">// @ts-check — enables TS checking in JS files
+
+/** @type {string} */
+let name = "Alice";
+
+/**
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
+ */
+function add(a, b) {
+  return a + b;
+}</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card purple">
+        <h3>Migration tsconfig.json</h3>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "target": "ES2022",
+    "module": "Node16",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"]
+}</code></pre>
+      </div>
+      <table style="margin-top:.3em;">
+        <thead><tr><th>Phase</th><th>Action</th><th>Risk</th></tr></thead>
+        <tbody>
+          <tr><td><span class="g">1. Setup</span></td><td><code>allowJs + checkJs</code></td><td>Zero</td></tr>
+          <tr><td><span class="a">2. Annotate</span></td><td>JSDoc types in <code>.js</code> files</td><td>Zero</td></tr>
+          <tr><td><span class="p">3. Rename</span></td><td><code>.js</code> &rarr; <code>.ts</code>, fix errors</td><td>Low</td></tr>
+          <tr><td><span class="b">4. Strict flags</span></td><td>Enable one flag at a time</td><td>Medium</td></tr>
+          <tr><td><span class="r">5. Full strict</span></td><td><code>"strict": true</code></td><td>Low (if incremental)</td></tr>
+        </tbody>
+      </table>
+      <div class="card blue" style="margin-top:.3em;">
+        <h3>Helpful Tools</h3>
+        <ul>
+          <li><code>ts-migrate</code> (Airbnb) &mdash; auto-converts JS to TS</li>
+          <li><code>@ts-expect-error</code> &mdash; suppress known issues temporarily</li>
+          <li><code>// @ts-ignore</code> &mdash; last resort, avoid in production</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 19 — SUMMARY ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">19</span><h2>Summary &amp; Next Steps</h2></div>
+  <div class="cols cols-3">
+    <div class="card amber">
+      <h3>Core Type System</h3>
+      <ul>
+        <li>Annotations, inference, <code>any</code>/<code>unknown</code>/<code>never</code></li>
+        <li>Interfaces, type aliases, structural typing</li>
+        <li>Unions, intersections, discriminated unions</li>
+        <li>Generics, constraints, utility types</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>Advanced Features</h3>
+      <ul>
+        <li>Mapped types, conditional types, <code>infer</code></li>
+        <li>Template literal types</li>
+        <li>Type guards, narrowing, assertion functions</li>
+        <li>Branded types, Result pattern</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h3>Ecosystem</h3>
+      <ul>
+        <li>Node.js: <code>tsx</code>, path aliases, tsconfig</li>
+        <li>Express: typed routes, middleware, params</li>
+        <li>React: props, hooks, generic components</li>
+        <li>Migration: <code>allowJs</code>, incremental adoption</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cols cols-2" style="margin-top:.3em;">
+    <div class="card blue">
+      <h3>Recommended Reading</h3>
+      <ul>
+        <li><span class="a">TypeScript Handbook</span> &mdash; typescriptlang.org/docs</li>
+        <li><span class="g">Programming TypeScript</span> &mdash; Boris Cherny, O'Reilly</li>
+        <li><span class="p">Effective TypeScript</span> &mdash; Dan Vanderkam, O'Reilly</li>
+        <li><span class="b">Type Challenges</span> &mdash; github.com/type-challenges</li>
+        <li><span class="r">Total TypeScript</span> &mdash; Matt Pocock (totaltypescript.com)</li>
+      </ul>
+    </div>
+    <div class="card red">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>TypeScript catches bugs at <span class="a">compile time</span>, not production</li>
+        <li>Start with <code>"strict": true</code> on every new project</li>
+        <li>Prefer <code>unknown</code> over <code>any</code> &mdash; always</li>
+        <li>Use discriminated unions over class hierarchies</li>
+        <li>Types are <span class="g">zero-cost</span> &mdash; erased at compile time</li>
+        <li>Gradual migration is the safe path for existing codebases</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+</div><!-- /slides -->
+</div><!-- /reveal -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/monokai.min.css">
+<script>
+Reveal.initialize({
+  hash: true,
+  transition: 'fade',
+  transitionSpeed: 'fast',
+  controls: true,
+  progress: true,
+  center: false,
+  width: 1100,
+  height: 900,
+  margin: 0.01,
+  plugins: [RevealHighlight],
+  highlight: { theme: 'monokai' }
+});
+</script>
+<script>
+(function(){
+  var h = Reveal.getConfig().height || 900;
+  var m = Reveal.getConfig().margin || 0.02;
+  var maxH = Math.floor(h * (1 - 2 * m)) + 'px';
+  function fixSlides(){
+    document.querySelectorAll('.reveal .slides>section,.reveal .slides>section>section').forEach(function(s){
+      s.style.display = 'block';
+      s.style.maxHeight = maxH;
+    });
+  }
+  Reveal.on('ready', fixSlides);
+  Reveal.on('slidechanged', fixSlides);
+})();
+</script>
+</body>
+</html>
